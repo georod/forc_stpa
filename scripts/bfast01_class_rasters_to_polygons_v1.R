@@ -52,7 +52,7 @@ outf1 <- "/home/georod/projects/def-mfortin/georod/data/forc_stpa/algonquin/outp
 
 # Study area bounding box
 #shp1 <- "C:/Users/Peter R/Documents/st_trends_for_c/shp/algonquin_envelope_500m_buff_v1_pj.shp"  # This is in MODIS sinu projection # local
-shp1 <- "/home/georod/projects/def-mfortin/georod/data/forc_stpa/input1/shp/algonquin_envelope_500m_buff_v1_pj.shp"  # This is in MODIS sinu projection # DRAC
+shp1 <- "/home/georod/projects/def-mfortin/georod/data/forc_stpa/algonquin/input1/shp/algonquin_envelope_500m_buff_v1_pj.shp"  # This is in MODIS sinu projection # DRAC
 
 #shp2 <- "C:/Users/Peter R/Documents/st_trends_for_c/shp/study_area_subset_v3.shp" # EPSG:3347
 
@@ -89,8 +89,12 @@ bbox <- terra::project(vect(shp1), r1)
 
 #freq(mask(r1[[k]], bbox))
 
+# labels for file names
+frq1 <- "16d"
+prefix1 <- "EVI_poly_type"
+
 # K=period, i=trend classes
-rPoly <- foreach (k= 1) %do% {
+rPoly <- foreach (k= 1:4) %do% {
 
 dir.create(paste0(outf1,periodLabs[k]))
   
