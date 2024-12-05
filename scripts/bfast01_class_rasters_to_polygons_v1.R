@@ -47,7 +47,7 @@ dataf <- "~/projects/def-mfortin/georod/data/forc_stpa" # data folder
 infolder1 <- "/home/georod/projects/def-mfortin/georod/data/forc_stpa/algonquin/output_h1yr/EVI_250m/" # DRAC
 
 #outf1 <- "C:/Users/Peter R/Documents/forc_stpa/output1/"
-outf1 <- "C:/Users/Peter R/Documents/forc_stpa/output1/"
+outf1 <- "/home/georod/projects/def-mfortin/georod/data/forc_stpa/algonquin/output1/"
 
 
 # Study area bounding box
@@ -90,7 +90,7 @@ bbox <- terra::project(vect(shp1), r1)
 #freq(mask(r1[[k]], bbox))
 
 # K=period, i=trend classes
-rPoly <- foreach (k= 1:4) %do% {
+rPoly <- foreach (k= 1) %do% {
 
 dir.create(paste0(outf1,periodLabs[k]))
   
