@@ -12,6 +12,10 @@
 #   - There are 8 different types of trend classes
 #   - We are looking at 4 periods: 2003-2007, 2008-2012, 2013-2017 & 2018-2022
 #   - Some trend classes are not available for all periods. Mostly only classes 1 & 2 when using 5-year periods.
+#   - 2024-12-09: It seems that terra created patches with geometry issues or Postgis function not working properly due to precision issues caused by GEOS.
+#   - I could run symmetric difference and intersection in QGIS. This works nicely compared to Postgis.  However, even it is works I will still have to replicate other functions of stampr.
+#   - How do I know if terra created bad geom or if Postgis fails due to old GEOS? It may be best to try to get stampr to work.
+#   - I ran the code on DRAC using R interactive session. Took < 1 min.
 
 start.time <- Sys.time()
 start.time
@@ -93,27 +97,56 @@ bbox <- terra::project(vect(shp1), r1)
 frq1 <- "16d2"
 prefix1 <- "EVI_poly_type"
 
+
+
 # K=period, i=trend classes
 rPoly <- foreach (k= 1:4) %do% {
-
-dir.create(paste0(outf1,periodLabs[k]))
   
-temp1 <- terra::crop(r1[[k]], bbox)
-temp1 <- terra::mask(temp1, bbox)
+  dir.create(paste0(outf1,periodLabs[k]))
+  
+  temp1 <- terra::crop(r1[[k]], bbox)
+  temp1 <- terra::mask(temp1, bbox)
   
   foreach (i=1:8) %do% {
     
     rclmat1 <- matrix(mL[[i]], ncol=3, byrow=TRUE)
     temp2  <- terra::classify(temp1[[1]], rclmat1, right=NA) # closed on right and left.
     
-    temp3 <- terra::patches(temp2, directions=8, zeroAsNA=FALSE, allowGaps=TRUE)
-    temp4 <- terra::as.polygons(temp3)
-    temp4$period <- k
-    temp4$type <- i
+    #temp3 <- terra::patches(temp2, directions=8, zeroAsNA=FALSE, allowGaps=TRUE) # This can accept NaN contrary to landscapemetrics
+ if (global(temp2, fun="notNA")==0) {
+   
+   temp3 <- temp2
+   temp4 <- terra::as.polygons(temp3[[1]][[1]])
+   temp4$period <- k
+   temp4$type <- i
+   
+ } else {
+   
+   temp3 <- landscapemetrics::get_patches(
+      temp2,
+      class = "all",
+      directions = 8,
+      to_disk = getOption("to_disk", default = TRUE),
+      return_raster = TRUE
+    )
+   
+   temp4 <- terra::as.polygons(temp3[[1]][[1]])
+   temp4$period <- k
+   temp4$type <- i
+   
+   writeVector(temp4, paste0(outf1, periodLabs[k], "/", prefix1,i, "_" , frq1, ".shp"), overwrite=TRUE)
+   
+   temp4
+   
+    }
     
-    writeVector(temp4, paste0(outf1, periodLabs[k], "/", prefix1,i, "_" , frq1, ".shp"), overwrite=TRUE)
-    
-    temp4
+    # temp4 <- terra::as.polygons(temp3[[1]][[1]])
+    # temp4$period <- k
+    # temp4$type <- i
+    # 
+    # writeVector(temp4, paste0(outf1, periodLabs[k], "/", prefix1,i, "_" , frq1, ".shp"), overwrite=TRUE)
+    # 
+    # temp4
     
   }
 }
