@@ -267,6 +267,10 @@ polyL[[4]]$ID <- (max(polyL[[3]]$ID) + 1):(max(polyL[[3]]$ID) + nrow(polyL[[4]])
 # - Stamp() function takes a long time to run. For the pilot study it took up to 15 minutes for a single run
 # It seems that intersecting vertices make direction and distance fail.
 
+#
+
+polyL2 <- polyL
+
 # Greening polygons
 polyChGr <- list()
 
