@@ -160,7 +160,7 @@ globalAll <- as.data.frame(rbind((do.call( cbind, globalP1)),
    (do.call( cbind, globalP3))))
    globalAll$label <- c("1 vs. 2", "2 vs. 3", "3 vs. 4")
    
-saveRDS(globalAll, "globalAll.rds")
+saveRDS(globalAll, paste0(outf1, "globalAll.rds"))
 
 
 # # Better to run locally
