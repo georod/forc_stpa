@@ -160,7 +160,7 @@ globalAll <- as.data.frame(rbind((do.call( cbind, globalP1)),
    (do.call( cbind, globalP3))))
    globalAll$label <- c("1 vs. 2", "2 vs. 3", "3 vs. 4")
    
-saveRDS(globalAll, paste0(outf1, "globalAll.rds"))
+saveRDS(globalAll, paste0(outf1, "globalAll34.rds"))
 
 
 # # Better to run locally
@@ -277,9 +277,10 @@ polyChGr <- list()
 #polyChGr[[1]] <- stamp(polyL2[[1]], polyL2[[2]], dc = 0, direction = FALSE, distance = FALSE)
 
 #polyChGr[[2]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, distance = FALSE)
-polyChGr[[1]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, distance = FALSE)
+#polyChGr[[1]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, distance = FALSE)
 
 #polyChGr[[3]] <- stamp(polyL2[[3]], polyL2[[4]], dc = 0, direction = FALSE, distance = FALSE)
+polyChGr[[1]] <- stamp(polyL2[[3]], polyL2[[4]], dc = 0, direction = FALSE, distance = FALSE)
 
  #saveRDS(polyChGr,  paste0(outf4, "polyChGreen1.rds")) # 1,3, & 4 with -1 buff, 2 with -5 but comparison 3 did not work.
  
@@ -290,7 +291,7 @@ polyChGr[[1]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, dist
 
 #st_write(polyCh1, paste0("./output1/gis/", "polyCh2_2to8.shp"))
 
-saveRDS(polyChGr,  paste0(outf1, "polyChGr.rds"))
+saveRDS(polyChGr,  paste0(outf1, "polyChGr34.rds"))
 
 
 #--------------------------------------------------
@@ -374,7 +375,7 @@ polyChGrDistL <- foreach(i=1:length(polyChGr)) %dopar%  {
              stampr::stamp.distance(polyChGr[[i]], dist.mode = "Centroid", group = TRUE) # "Hausdorff", "Centroid"    
                         }
 
-saveRDS(polyChGrDistL,  paste0(outf1, "polyChGrDistL.rds"))
+saveRDS(polyChGrDistL,  paste0(outf1, "polyChGrDistL34.rds"))
 
 #polyChGrDistL[[3]]
 
@@ -423,7 +424,7 @@ polyChGrDirL <- foreach(i=1:length(polyChGr)) %dopar% {
                 stampr::stamp.direction(polyChGr[[i]], dir.mode = "ConeModel", ndir = 4, group = FALSE) # "CentroidAngle", "ConeModel", "MBRModel"
                 }
                 
-saveRDS(polyChGrDirL,  paste0(outf1, "polyChGrDirL.rds"))
+saveRDS(polyChGrDirL,  paste0(outf1, "polyChGrDirL34.rds"))
 
 
 #--------------------------------------------------
