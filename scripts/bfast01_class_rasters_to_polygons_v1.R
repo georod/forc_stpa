@@ -90,7 +90,7 @@ bbox <- terra::project(vect(shp1), r1)
 #freq(mask(r1[[k]], bbox))
 
 # labels for file names
-frq1 <- "16d2"
+frq1 <- "16d"
 prefix1 <- "EVI_poly_type"
 
 # K=period, i=trend classes

@@ -160,7 +160,7 @@ globalAll <- as.data.frame(rbind((do.call( cbind, globalP1)),
    (do.call( cbind, globalP3))))
    globalAll$label <- c("1 vs. 2", "2 vs. 3", "3 vs. 4")
    
-saveRDS(globalAll, paste0(outf1, "globalAll23.rds"))
+saveRDS(globalAll, paste0(outf1, "globalAll12.rds"))
 
 
 # # Better to run locally
@@ -274,13 +274,13 @@ polyL2 <- polyL
 # Greening polygons
 polyChGr <- list()
 
-#polyChGr[[1]] <- stamp(polyL2[[1]], polyL2[[2]], dc = 0, direction = FALSE, distance = FALSE)
+polyChGr[[1]] <- stamp(polyL2[[1]], polyL2[[2]], dc = 0, direction = FALSE, distance = FALSE)
 
 #polyChGr[[2]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, distance = FALSE)
-polyChGr[[1]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, distance = FALSE)
+#polyChGr[[1]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, distance = FALSE)
 
 #polyChGr[[3]] <- stamp(polyL2[[3]], polyL2[[4]], dc = 0, direction = FALSE, distance = FALSE)
-
+#polyChGr[[1]] <- stamp(polyL2[[3]], polyL2[[4]], dc = 0, direction = FALSE, distance = FALSE)
 
  #saveRDS(polyChGr,  paste0(outf4, "polyChGreen1.rds")) # 1,3, & 4 with -1 buff, 2 with -5 but comparison 3 did not work.
  
@@ -291,7 +291,7 @@ polyChGr[[1]] <- stamp(polyL2[[2]], polyL2[[3]], dc = 0, direction = FALSE, dist
 
 #st_write(polyCh1, paste0("./output1/gis/", "polyCh2_2to8.shp"))
 
-saveRDS(polyChGr,  paste0(outf1, "polyChGr23.rds"))
+saveRDS(polyChGr,  paste0(outf1, "polyChGr12.rds"))
 
 
 #--------------------------------------------------
@@ -359,7 +359,7 @@ foreach (i=1:length(polyChGr)) %do% {
       
       dir.create(file.path(outf1, paste0("stampr_", stamprLevLabs[1])))   
          
-     st_write(polyChGr[[i]], paste0(outf1, paste0("stampr_", stamprLevLabs[1]), "/",trendLabs[1], "_comp23",i,".shp"), append=FALSE)    
+     st_write(polyChGr[[i]], paste0(outf1, paste0("stampr_", stamprLevLabs[1]), "/",trendLabs[1], "_comp12",i,".shp"), append=FALSE)    
          
          }
 
@@ -375,7 +375,7 @@ polyChGrDistL <- foreach(i=1:length(polyChGr)) %dopar%  {
              stampr::stamp.distance(polyChGr[[i]], dist.mode = "Centroid", group = TRUE) # "Hausdorff", "Centroid"    
                         }
 
-saveRDS(polyChGrDistL,  paste0(outf1, "polyChGrDistL23.rds"))
+saveRDS(polyChGrDistL,  paste0(outf1, "polyChGrDistL12.rds"))
 
 #polyChGrDistL[[3]]
 
@@ -424,7 +424,7 @@ polyChGrDirL <- foreach(i=1:length(polyChGr)) %dopar% {
                 stampr::stamp.direction(polyChGr[[i]], dir.mode = "ConeModel", ndir = 4, group = FALSE) # "CentroidAngle", "ConeModel", "MBRModel"
                 }
                 
-saveRDS(polyChGrDirL,  paste0(outf1, "polyChGrDirL23.rds"))
+saveRDS(polyChGrDirL,  paste0(outf1, "polyChGrDirL12.rds"))
 
 
 #--------------------------------------------------

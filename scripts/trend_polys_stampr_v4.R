@@ -357,9 +357,9 @@ stamprLevLabs <- c("lev1", "lev2", "lev3")
 
 foreach (i=1:length(polyChGr)) %do% {
       
-      dir.create(file.path(outf3, paste0("stampr_", stamprLevLabs[1])))   
+      dir.create(file.path(outf1, paste0("stampr_", stamprLevLabs[1])))   
          
-     st_write(polyChGr[[i]], paste0(outf3, paste0("stampr_", stamprLevLabs[1]), "/",trendLabs[1], "_comp",i,".shp"), append=FALSE)    
+     st_write(polyChGr[[i]], paste0(outf1, paste0("stampr_", stamprLevLabs[1]), "/",trendLabs[1], "_comp34_",i,".shp"), append=FALSE)    
          
          }
 
