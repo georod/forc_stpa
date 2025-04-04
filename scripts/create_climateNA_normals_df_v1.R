@@ -1,5 +1,5 @@
 #===============================================================================
-# ClimateNA normals data frame for XGB
+# ClimateNA normals (1960-1990) data frame for XGB
 #===============================================================================
 
 # 2025-03-13
@@ -7,6 +7,7 @@
 # Notes:
 # - Aim: create a df with new ClimateNA vars (climate normals). This will be joined with duckdb CSV from Chapter 2.
 # - The outputs of this code become inputs for the duckdb workflow which joins different CSVs together.
+# - The normal CSV created below should be useful for all periods. That is, I do not have to create period specific tables.
 
 
 # Peter R.
@@ -25,7 +26,7 @@ library(dplyr)
 infolder1 <- "C:/Users/Peter R/Documents/data/gis/ClimateNA_data/normals/" 
 #outf1 <- "C:/Users/Peter R/Documents/data/gis/ClimateNA_data/normals/" 
 outf2 <- "~/forc_stpa/output1/data/csv_duckdb/"
-
+outf3 <- "C:/Users/Peter R/Desktop/duckdb/"
 
 
 #------------------------------------------------------
@@ -78,6 +79,8 @@ hist(df2$cmi_sm_nor)
 # turns our to be about 60 times the normal value. The other vars seem ok.
 # If I just drop these values, I will drop several hundred.  Also, cmi_sm seems to be important as it pops up in the VIF analysis
 
+# 2025-03-21: Update I am using absolute change metrics instead of relative change metrics give the issue of outliers mentioned above.
+
 # recode cms_sm_nor, cap at +- 0.1
 dim(df2[which(df2$cmi_sm_nor >= -0.1 & df2$cmi_sm_nor <= 0.1),]) # 4707
 hist(df2[which(df2$cmi_sm_nor >= -0.1 & df2$cmi_sm_nor <= 0.1), "cmi_sm_nor"])
@@ -95,3 +98,39 @@ hist(df2[which(df2$cmi_sm_nor2 >= -0.1 & df2$cmi_sm_nor2 <= 0.1), "cmi_sm_nor2"]
 #------------------------------------------------------
 
 write.csv(df2, paste0(outf2, "df2_climate_normals30_v1.csv"), na="", row.names = FALSE)
+
+df2 <- read.csv( paste0(outf2, "df2_climate_normals30_v1.csv"))
+head(df2)
+summary(df2)
+
+
+
+# ChatGPT code
+# Example Data
+# df <- data.frame(
+#   Location = c("A", "B", "C", "D"),
+#   CMI_Normal = c(0.5, -0.2, 0.05, -1.5),   # Climate normal (1961-1990)
+#   CMI_Contemporary = c(1.2, 0.8, 0.6, -0.5) # Contemporary CMI (2003-2022)
+# )
+# 
+# # Define epsilon (small constant for stability)
+# epsilon <- 0.1
+# 
+# # Compute stabilized relative CMI
+# df$Relative_CMI <- (df$CMI_Contemporary - df$CMI_Normal) / 
+#   pmax(abs(df$CMI_Normal), epsilon)
+# 
+# # Print results
+# print(df)
+# 
+# 
+# 
+# #
+# epsilon <- 0.1
+# df2$cmi_sm_nor3 <- pmax(abs(df2$cmi_sm_nor), epsilon)
+# summary(abs(df2$cmi_sm_nor))
+# summary(df2)
+
+write.csv(df2, paste0(outf2, "df2_climate_normals30_v1.csv"), na="", row.names = FALSE)
+
+write.csv(df2, paste0(outf3, "df2_climate_normals30_v1.csv"), na="", row.names = FALSE)

@@ -33,7 +33,17 @@ bbox <- terra::vect("C:/Users/Peter R/Documents/st_trends_for_c/shp/algonquin_en
 
 # Load rasters
 raster1 <- terra::rast("C:/Users/Peter R/Documents/data/gis/modis/algonquin_v2/modistsp/VI_16Days_250m_v61/EVI/MOD13Q1_EVI_2011_161.tif")
+
+raster1 <- terra::rast("C:/Users/Peter R/Documents/data/gis/modis/algonquin_v2/modistsp/VI_16Days_250m_v61/EVI/MOD13Q1_EVI_2019_161.tif")
+
+
 raster2 <- terra::rast("C:/Users/Peter R/Documents/data/gis/algonquin/beaudoin2011_stand_age_v1.tif")
+
+
+# "C:\Users\Peter R\Documents\data\gis\ont_out\ont_CA_forest_age_2019.tif"
+
+raster2 <- terra::rast("~/st_trends_for_c/algonquin/ver2/data/gis/raster/ont_CA_forest_age_2019_masked1.tif")
+
 
 # Projection
 raster1 <- terra::project(raster1, "EPSG:3347")
@@ -59,11 +69,12 @@ summary(df)
 
 # Compute correlation
 correlation <- cor(df[,1], df[,2], use = "complete.obs")
+correlation #; 0.00028
 
 names(df) <- c("EVI", "Forest Age")
 
 plot(df$`Forest Age`, df$EVI)
-plot(df$EVI, df$`Forest Age`)
+#plot(df$EVI, df$`Forest Age`)
 
 #plot(8048-df$EVI, df$`Forest Age`)
 
@@ -102,4 +113,71 @@ summary(raster2_crop)
 # median: 90.2
 # mean: 89.2
 # 3rd Q: 100.7
+
+# The plot for 2019 show almost no correlation, Linear model used instead
+
+png(file=paste0(outf1, "evi_forest_age_2019_v1", ".png"),
+    units = "in",
+    width = 6,
+    height = 3.5,
+    res = 300)
+
+ggplot() + geom_point(aes(dfSample$`Forest Age`,dfSample$EVI)) + 
+  geom_smooth(aes(dfSample$`Forest Age`,dfSample$EVI), method="lm", se=F) + xlab("Forest age in 2019 (years)") + ylab("EVI in mid-June 2019")
+
+dev.off()
+
+
+
+#-----------------------------------------------------------
+# MJ asked that I create reclassified maps of forest age
+#-----------------------------------------------------------
+
+rforAge2019 <- terra::rast("~/st_trends_for_c/algonquin/ver2/data/gis/raster/ont_CA_forest_age_2019_masked1.tif")
+rforAge2011  <- terra::rast("C:/Users/Peter R/Documents/data/gis/algonquin/beaudoin2011_stand_age_v1.tif")
+rforAge2001  <- terra::rast("C:/Users/Peter R/Documents/data/gis/algonquin/beaudoin2001_stand_age_v1.tif")
+
+# Forest Age 2019
+rforAge2019
+summary(rforAge2019)
+spatSample(rforAge2019, 10)
+
+fact <- round(dim(rforAge2019)[1:2] / dim(rforAge2011)[1:2]) # high resolution raster / low resolution raster. Proj does not need to be the same but shoudl be equivalent extents
+
+rforAge2019Agg <- aggregate(rforAge2019, fact, modal, na.rm=T) # na.rm=T is key because terra is couting NAs. Better use fun="modal"
+
+
+# Reclassification matrix
+# 20 yr age classes
+m12 <-  c(0, 20, 1,
+          20, 40, 2,
+          40, 60, 3,
+          60, 80, 4,
+          80, 100, 5,
+          100, 120, 6,
+          120, 140, 7,
+          140, 200, 8) # This is in fact the class 140+, after classifying 130+
+
+
+rclM12 <- matrix(m12, ncol=3, byrow=TRUE)
+
+rforAge2011 <- classify(rforAge2011, rclM12, include.lowest=FALSE)
+
+plot(rforAge2011)
+
+rforAge2001 <- classify(rforAge2001, rclM12, include.lowest=FALSE)
+
+
+rforAge2019Agg <- classify(rforAge2019Agg, rclM12, include.lowest=FALSE)
+rforAge2019_30m <- classify(rforAge2019, rclM12, include.lowest=FALSE)
+
+
+fpath1 <- "~/st_trends_for_c/algonquin/version3/gis/"
+
+
+writeRaster(rforAge2, paste0(fpath1,"reclass_forest_age_2011_v1.tif"), overwrite=T)
+
+writeRaster(rforAge2001, paste0(fpath1,"reclass_forest_age_2001_v1.tif"), overwrite=T)
+
+writeRaster(rforAge2019_30m, paste0(fpath1,"reclass_forest_age_2019_30m_v1.tif"), overwrite=T)
 
